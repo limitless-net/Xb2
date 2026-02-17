@@ -1,0 +1,144 @@
+{
+    "name": "Telegram Bot 集成",
+    "code": "telegram",
+    "version": "3.0.0",
+    "description": "Telegram Bot 全功能插件：签到/抽奖/套餐/订单/钱包/工单/排行/节点状态/到期预警/管理员工具等",
+    "author": "XBoard Team",
+    "require": {
+        "xboard": ">=1.0.0"
+    },
+    "config": {
+        "enable_ticket_notify": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启工单通知",
+            "description": "是否开启工单创建和回复的 Telegram 通知功能"
+        },
+        "enable_payment_notify": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启支付通知",
+            "description": "是否开启支付成功的 Telegram 通知功能"
+        },
+        "enable_checkin": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启每日签到",
+            "description": "是否开启每日签到送流量功能"
+        },
+        "checkin_min_mb": {
+            "type": "string",
+            "default": "50",
+            "label": "签到最小流量(MB)",
+            "description": "每次签到随机赠送的最小流量，单位 MB"
+        },
+        "checkin_max_mb": {
+            "type": "string",
+            "default": "500",
+            "label": "签到最大流量(MB)",
+            "description": "每次签到随机赠送的最大流量，单位 MB"
+        },
+        "enable_expire_alert": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启到期预警",
+            "description": "到期前自动通知用户续费"
+        },
+        "expire_alert_days": {
+            "type": "string",
+            "default": "3",
+            "label": "到期预警天数",
+            "description": "提前多少天发送到期提醒"
+        },
+        "enable_traffic_alert": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启流量预警",
+            "description": "剩余流量不足时自动通知用户"
+        },
+        "traffic_alert_percent": {
+            "type": "string",
+            "default": "10",
+            "label": "流量预警阈值(%)",
+            "description": "剩余流量低于总流量的此百分比时触发预警"
+        },
+        "node_check_probe_url": {
+            "type": "string",
+            "default": "",
+            "label": "中国探测节点URL",
+            "description": "部署在中国服务器上的探测脚本地址（如 http://47.120.26.96:8880/probe），留空则只显示面板内部状态"
+        },
+        "enable_lucky": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启幸运抽奖",
+            "description": "是否开启每周抽奖功能"
+        },
+        "lucky_min_mb": {
+            "type": "string",
+            "default": "500",
+            "label": "抽奖最小流量(MB)",
+            "description": "抽奖随机赠送的最小流量，单位 MB"
+        },
+        "lucky_max_mb": {
+            "type": "string",
+            "default": "5000",
+            "label": "抽奖最大流量(MB)",
+            "description": "抽奖随机赠送的最大流量，单位 MB"
+        },
+        "enable_pending_alert": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启待支付提醒",
+            "description": "未支付订单自动提醒用户完成付款"
+        },
+        "enable_register_notify": {
+            "type": "boolean",
+            "default": true,
+            "label": "开启注册通知",
+            "description": "新用户注册后向管理员发送 TG 通知"
+        },
+        "start_welcome_title": {
+            "type": "string",
+            "default": "🎉 欢迎使用 XBoard Telegram Bot！",
+            "label": "欢迎标题",
+            "description": "/start 命令显示的欢迎标题"
+        },
+        "start_bot_description": {
+            "type": "text",
+            "default": "🤖 我是您的专属助手，可以帮助您：\\n• 绑定您的 XBoard 账号\\n• 每日签到领流量\\n• 查看账户和流量状态\\n• 查看节点在线状态\\n• 获取最新订阅链接",
+            "label": "机器人描述",
+            "description": "/start 命令显示的机器人功能介绍"
+        },
+        "start_bind_guide": {
+            "type": "text",
+            "default": "🔗 请先绑定您的 XBoard 账号：\\n1. 登录您的 XBoard 账户\\n2. 复制您的订阅链接\\n3. 发送 /bind + 订阅链接",
+            "label": "绑定指导",
+            "description": "未绑定用户显示的绑定指导文本"
+        },
+        "start_unbind_guide": {
+            "type": "text",
+            "default": "📝 可用命令：\\n/checkin - 每日签到\\n/status - 账户总览\\n/traffic - 查看流量\\n/node - 节点状态\\n/invite - 邀请返利\\n/renew - 快捷续费\\n/plan - 查看套餐\\n/lucky - 幸运抽奖\\n/reset - 重置订阅\\n/ticket - 快捷工单\\n/rank - 邀请排行\\n/wallet - 我的钱包\\n/order - 最近订单\\n/getlatesturl - 获取订阅链接\\n/unbind - 解绑账号",
+            "label": "已绑定用户命令列表",
+            "description": "已绑定用户显示的命令列表"
+        },
+        "start_bind_commands": {
+            "type": "text",
+            "default": "📋 可用命令：\\n/bind [订阅链接] - 绑定账号",
+            "label": "未绑定用户命令列表",
+            "description": "未绑定用户显示的命令列表"
+        },
+        "start_footer": {
+            "type": "text",
+            "default": "💡 提示：所有命令都需要在私聊中使用",
+            "label": "底部提示",
+            "description": "/start 命令底部的提示信息"
+        },
+        "help_text": {
+            "type": "text",
+            "default": "📝 可用命令：\\n/checkin - 每日签到\\n/status - 账户总览\\n/traffic - 查看流量\\n/node - 节点状态\\n/invite - 邀请返利\\n/renew - 快捷续费\\n/plan - 查看套餐\\n/lucky - 幸运抽奖\\n/reset - 重置订阅\\n/ticket - 快捷工单\\n/rank - 邀请排行\\n/wallet - 我的钱包\\n/order - 最近订单\\n/getlatesturl - 获取订阅\\n/bind - 绑定账号\\n/unbind - 解绑账号\\n\\n管理员命令：\\n/search - 查询用户\\n/broadcast - 群发通知\\n/stats - 运营统计\\n/ban - 封禁用户",
+            "label": "帮助文本",
+            "description": "未知命令时显示的帮助文本"
+        }
+    }
+}

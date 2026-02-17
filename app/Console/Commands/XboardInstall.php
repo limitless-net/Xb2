@@ -55,7 +55,7 @@ class XboardInstall extends Command
         try {
             $isDocker = file_exists('/.dockerenv');
             $enableSqlite = getenv('ENABLE_SQLITE', false);
-            $enableRedis = getenv('ENABLE_REDIS', false);
+            $enableRedis = filter_var(getenv('ENABLE_REDIS'), FILTER_VALIDATE_BOOLEAN);
             $adminAccount = getenv('ADMIN_ACCOUNT', false);
             $this->info("__    __ ____                      _  ");
             $this->info("\ \  / /| __ )  ___   __ _ _ __ __| | ");
@@ -107,6 +107,33 @@ class XboardInstall extends Command
                     $envConfig['REDIS_HOST'] = '/data/redis.sock';
                     $envConfig['REDIS_PORT'] = 0;
                     $envConfig['REDIS_PASSWORD'] = null;
+                    // 等待 Redis socket 就绪（Docker 内 Redis 可能还在启动中）
+                    $socketPath = $envConfig['REDIS_HOST'];
+                    $maxWait = 30; // 最多等30秒
+                    $waited = 0;
+                    // 尝试通过 supervisor 启动 Redis
+                    if (!file_exists($socketPath) && function_exists('exec')) {
+                        @exec('supervisorctl start redis:* 2>/dev/null');
+                        // 如果 supervisor 控制不了（ENABLE_REDIS=false），直接启动
+                        sleep(1);
+                        if (!file_exists($socketPath)) {
+                            @exec('redis-server --dir /data --dbfilename dump.rdb --unixsocket /data/redis.sock --unixsocketperm 777 --daemonize yes 2>/dev/null');
+                        }
+                    }
+                    while (!file_exists($socketPath) && $waited < $maxWait) {
+                        if ($waited === 0) {
+                            $this->info('等待 Redis 启动...');
+                        }
+                        sleep(1);
+                        $waited++;
+                    }
+                    if ($waited > 0 && file_exists($socketPath)) {
+                        $this->info("Redis 已就绪（等待了 {$waited} 秒）");
+                    } elseif (!file_exists($socketPath)) {
+                        $this->error("Redis socket 仍不存在，请手动启动 Redis 后重试");
+                        $enableRedis = false;
+                        continue;
+                    }
                 } else {
                     $envConfig['REDIS_HOST'] = text(label: '请输入Redis地址', default: '127.0.0.1', required: true);
                     $envConfig['REDIS_PORT'] = text(label: '请输入Redis端口', default: '6379', required: true);

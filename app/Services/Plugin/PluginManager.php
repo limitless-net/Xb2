@@ -670,11 +670,15 @@ class PluginManager
     public static function installDefaultPlugins(): void
     {
         foreach (Plugin::PROTECTED_PLUGINS as $pluginCode) {
-            if (!Plugin::where('code', $pluginCode)->exists()) {
-                $pluginManager = app(self::class);
-                $pluginManager->install($pluginCode);
-                $pluginManager->enable($pluginCode);
-                Log::info("Installed and enabled default plugin: {$pluginCode}");
+            try {
+                if (!Plugin::where('code', $pluginCode)->exists()) {
+                    $pluginManager = app(self::class);
+                    $pluginManager->install($pluginCode);
+                    $pluginManager->enable($pluginCode);
+                    Log::info("Installed and enabled default plugin: {$pluginCode}");
+                }
+            } catch (\Exception $e) {
+                Log::warning("Skipped default plugin '{$pluginCode}': " . $e->getMessage());
             }
         }
     }
