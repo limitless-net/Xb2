@@ -66,11 +66,7 @@ chattr -i .user.ini
 rm -rf .htaccess 404.html 502.html index.html .user.ini
 
 # Clone repository
-<<<<<<< HEAD
 git clone https://github.com/cedar2025/Xboard.git ./
-=======
-git clone https://github.com/limitless-net/Xb2.git ./
->>>>>>> 18e0997eff1785ab58f5997f4679f3a675328f83
 
 # Prepare configuration file
 cp compose.sample.yaml compose.yaml
